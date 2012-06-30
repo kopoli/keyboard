@@ -43,10 +43,14 @@ EOF
     xset -r 66
 }
 
+basedir=$(dirname $0)
+
 case $map in
 
     fi)
-	setxkbmap $map
+	KBDIR=$basedir/keyboard
+	test -d "$KBDIR" || { echo "directory $KBDIR not found"; exit 1; }
+	xkbcomp -I$KBDIR $KBDIR/${map}-qwerty-layout.xkb $DISPLAY -w0
 	;;
 
     dvorak)
