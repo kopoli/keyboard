@@ -1,0 +1,6 @@
+partial hidden modifier_keys
+xkb_symbols "hyper" {
+    key <CAPS> {        [       Hyper_L  ]       };
+    key <MENU> {        [       Hyper_R  ]       };
+    modifier_map Mod3   { <CAPS>, <MENU>, <HYPR> };
+};
