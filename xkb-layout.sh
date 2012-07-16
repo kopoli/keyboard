@@ -2,6 +2,8 @@
 
 map="$1"
 
+defmap=fi-qwerty
+
 enable_switch_hyper_control()
 {
     # this script sets hyper as the new control_l and moves control_l to capslock
@@ -45,12 +47,14 @@ EOF
 
 basedir=$(dirname $0)
 
+test -z "$map" && map=$defmap
+
 case $map in
 
-    fi)
+    fi-qwerty|fi-das)
 	KBDIR=$basedir/keyboard
 	test -d "$KBDIR" || { echo "directory $KBDIR not found"; exit 1; }
-	xkbcomp -I$KBDIR $KBDIR/${map}-qwerty-layout.xkb $DISPLAY -w0
+	xkbcomp -I$KBDIR $KBDIR/${map}-layout.xkb $DISPLAY -w0
 
 	xset r rate 200
 	;;
