@@ -4,3 +4,14 @@ xkb_symbols "hyper" {
     key <RTSH> {        [       Hyper_R  ]       };
     modifier_map Mod3   { <CAPS>, <RTSH>, <HYPR> };
 };
+
+partial hidden modifier_keys
+xkb_symbols "hyper_swap" {
+    key <CAPS> {        [       Control_L  ]     };
+    modifier_map Control   { <CAPS>,<RCTL> };
+
+    key <LCTL> {        [       Hyper_L  ]       };
+    key <RTSH> {        [       Hyper_R  ]       };
+    modifier_map Mod3   { <LCTL>, <RTSH>, <HYPR> };
+};
+

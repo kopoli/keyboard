@@ -4,60 +4,14 @@ map="$1"
 
 defmap=fi-qwerty
 
-enable_switch_hyper_control()
-{
-    # this script sets hyper as the new control_l and moves control_l to capslock
-    cat <<EOF | xmodmap -
-! remove caps lock
-clear lock
-
-!remove hyper from super equivalency and control temporarily
-remove mod4 = Hyper_L
-remove control = Control_L
-
-!set control to caps lock
-keycode 66 = Control_L
-
-!set the control to hyper
-keycode 37 = Hyper_L
-
-!set hyper and control to their rightful place
-add mod3 = Hyper_L
-add control = Control_L
-
-EOF
-
-    # take repeat away from the new control button
-    xset -r 66
-}
-
-replace_capslock_hyper()
-{
-    cat <<EOF | xmodmap -
-clear lock
-remove mod4 = Hyper_L
-add mod3 = Hyper_L
-keycode 66 = Hyper_L
-EOF
-    #for some reason this has to be done afterwards
-    xmodmap -e 'remove control = Hyper_L'
-
-    xset -r 66
-}
-
 basedir=$(dirname $0)
+KBDIR=$basedir/keyboard
 
 test -z "$map" && map=$defmap
 
+mapconfigs=$(echo $KBDIR/*xkb | sed -e "s,$KBDIR/,,g; s,-layout.xkb,,g; s, ,|,g")
+
 case $map in
-
-    fi-qwerty|fi-das)
-	KBDIR=$basedir/keyboard
-	test -d "$KBDIR" || { echo "directory $KBDIR not found"; exit 1; }
-	xkbcomp -I$KBDIR $KBDIR/${map}-layout.xkb $DISPLAY -w0
-
-	xset r rate 200
-	;;
 
     dvorak)
 	# This has the level3 enabled with alt gr
@@ -72,12 +26,13 @@ EOF
 
 	;;
     *)
-	echo invalid keymap $map
-	exit 1
+	mapfile=$KBDIR/${map}-layout.xkb
+	if test -f $mapfile; then
+	    xkbcomp -I$KBDIR $KBDIR/${map}-layout.xkb $DISPLAY -w0
+	    xset r rate 200
+	else
+	    echo invalid keymap $map
+	    exit 1
+	fi
 	;;
 esac
-
-#enable this when lower left control starts to get old
-#enable_switch_hyper_control
-
-replace_capslock_hyper
