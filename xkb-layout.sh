@@ -2,7 +2,7 @@
 
 map="$1"
 
-defmap=fi-qwerty
+defmap=fi-hs-qwerty
 
 basedir=$(dirname $0)
 KBDIR=$basedir/keyboard
