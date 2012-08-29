@@ -12,5 +12,8 @@ clean: $(DESKTOP_FILES)
 %: %.in
 	sed -e 's,@RUNDIR@,$(RUNDIR),g' $< > $@
 
+image:
+	for s in $$(seq 1 3); do xkbprint -color -ll $$s  -fit :0 -lc en_US.ISO8859-15  -o -; done | ps2pdf - - > keyboard.pdf
+
 $(INSTDIR)/%: %
 	cp $< $@
