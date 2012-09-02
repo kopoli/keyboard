@@ -29,7 +29,7 @@ EOF
 	mapfile=$KBDIR/${map}-layout.xkb
 	if test -f $mapfile; then
 	    xkbcomp -I$KBDIR $KBDIR/${map}-layout.xkb $DISPLAY -w0
-	    xset r rate 200
+	    xset r rate 300 20
 	else
 	    echo invalid keymap $map
 	    exit 1
