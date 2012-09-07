@@ -2,7 +2,7 @@
 INSTDIR=$(HOME)/.local/share/applications
 RUNDIR=$(PWD)
 
-DESKTOP_FILES=keylayout.desktop
+DESKTOP_FILES=keylayout.desktop keyrotate.desktop
 
 install: $(addprefix $(INSTDIR)/, $(DESKTOP_FILES))
 
