@@ -8,5 +8,8 @@ xkb_symbols "fi" {
     key <AC01> { [ a,   A,      adiaeresis,      Adiaeresis   ] };
     key <AC02> { [ o,   O,      odiaeresis,      Odiaeresis   ] };
 
+    // the extra key on most European keyboards
+    key <LSGT> { [ parenleft, parenright, bar, brokenbar ] };
+
     include "level3(ralt_switch)"
 };
