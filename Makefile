@@ -6,10 +6,13 @@ RUNDIR=$(PWD)
 BIN_FILES=xkb-layout
 DESKTOP_FILES=keylayout.desktop keyrotate.desktop
 
+.SUFFIXES:
+.SUFFIXES: .in
+
 install: $(addprefix $(INSTDIR)/, $(DESKTOP_FILES)) $(addprefix $(BINDIR)/,$(BIN_FILES))
 
-clean: $(DESKTOP_FILES) $(BIN_FILES)
-	$(RM) $^
+clean:
+	$(RM) $(DESKTOP_FILES) $(BIN_FILES)
 
 %: %.in
 	sed -e 's,@RUNDIR@,$(RUNDIR),g' $< > $@
