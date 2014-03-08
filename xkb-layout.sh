@@ -36,6 +36,7 @@ set_keymap()
 {
     xkbcomp -I$KBDIR $(layout_file $1) $DISPLAY -w0
     xset r rate 300 20
+    xkb-unlocker
 
     notify-send -i info "Keymap set: $1"
 }
