@@ -10,7 +10,7 @@ INST_FILE=install -m 0644
 INST_EXEC=install -m 0755
 
 FLAGS=-Wall -Werror $(shell pkg-config --cflags --libs x11)
-COMPILE=$(CC) $(FLAGS) $1 $2
+COMPILE=$(CC) $(FLAGS)
 
 .SUFFIXES:
 .SUFFIXES: .in .c
