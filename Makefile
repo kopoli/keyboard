@@ -10,7 +10,6 @@ INST_FILE=install -m 0644
 INST_EXEC=install -m 0755
 
 FLAGS=-Wall -Werror $(shell pkg-config --cflags --libs x11)
-COMPILE=$(CC) $(FLAGS)
 
 .SUFFIXES:
 .SUFFIXES: .in .c
@@ -34,7 +33,7 @@ $(INSTDIR)/%: %
 	sed -e 's,@RUNDIR@,$(RUNDIR),g' $< > $@
 
 %:: %.c
-	$(COMPILE) -o $@ $<
+	$(CC) -o $@ $< $(FLAGS)
 
 image:
 	for s in $$(seq 1 3); do xkbprint -color -ll $$s  -fit :0 -lc en_US.ISO8859-15  -o -; done | ps2pdf - - > keyboard.pdf
