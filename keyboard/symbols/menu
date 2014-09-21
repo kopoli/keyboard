@@ -28,6 +28,7 @@ xkb_symbols "alt_swap" {
 };
 
 // Swap insert and pause-break
+// for Kinesis freestyle2
 partial hidden modifier_keys
 xkb_symbols "insert_swap" {
     key  <PAUS> {	[ Insert ]	};
@@ -37,9 +38,22 @@ xkb_symbols "insert_swap" {
     };
 };
 
+// In Kinesis freestyle2 the rightmost column is the following:
+// Home, End, PgUp, PgDown
+// Make it the following:
+// Home, PgUp, PgDown, End
+partial hidden alphanumeric_keys
+xkb_symbols "home_column" {
+    key  <HOME> {	[ Home ]	};
+    key  <END> {	[ Prior ]	};
+    key  <PGUP> {	[ Next ]	};
+    key  <PGDN> {	[ End ]	};
+};
+
 partial hidden modifier_keys
 xkb_symbols "hyper_alt_swap" {
     include "menu(hyper_swap)"
     include "menu(alt_swap)"
     include "menu(insert_swap)"
+    include "menu(home_column)"
 };
