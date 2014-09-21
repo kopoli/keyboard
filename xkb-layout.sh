@@ -1,5 +1,29 @@
 #!/bin/sh
 
+usage()
+{
+    test -n "$1" && echo "Error: $@"
+
+    cat <<EOF
+usage: $0 [-rotate | keymap-name]
+
+Changes the keyboard layout.
+
+Arguments:
+
+  -rotate        - This will rotate the keymaps in the following order:kl
+                   $rotation
+  <keymap-name>  - This will set to given keymap.
+
+Without arguments it will set the keymap: $defmap
+
+The following are possible keymaps: $mapconfigs
+Current keymap: $(current_keymap)
+
+EOF
+    exit 1
+}
+
 map="$1"
 
 defmap=fi-hs-qwerty
@@ -81,10 +105,7 @@ EOF
 	    set_keymap ${map}
 	    echo $(layout_keymap $mapfile)
 	else
-	    echo invalid keymap: $map
-	    echo "possibilities:  $mapconfigs"
-	    echo current keymap: $(current_keymap)
-	    exit 1
+	    usage "invalid keymap: $map"
 	fi
 	;;
 esac
