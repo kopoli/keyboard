@@ -27,8 +27,19 @@ xkb_symbols "alt_swap" {
     modifier_map Mod1   { <TAB>, <MENU> };
 };
 
+// Swap insert and pause-break
+partial hidden modifier_keys
+xkb_symbols "insert_swap" {
+    key  <PAUS> {	[ Insert ]	};
+    key  <INS>  {
+     	 type= "PC_CONTROL_LEVEL2",
+	 symbols[Group1]= [ Pause, Break ]
+    };
+};
+
 partial hidden modifier_keys
 xkb_symbols "hyper_alt_swap" {
     include "menu(hyper_swap)"
     include "menu(alt_swap)"
+    include "menu(insert_swap)"
 };
