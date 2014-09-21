@@ -1,7 +1,7 @@
 
-INSTDIR=$(HOME)/.local/share/applications
-BINDIR=$(HOME)/softa/bin
-RUNDIR=$(PWD)
+INSTDIR = $(HOME)/.local/share/applications
+BINDIR ?= $(HOME)/softa/bin
+RUNDIR  = $(PWD)
 
 BIN_FILES=xkb-layout xkb-unlocker
 DESKTOP_FILES=keylayout.desktop keyrotate.desktop
@@ -9,7 +9,7 @@ DESKTOP_FILES=keylayout.desktop keyrotate.desktop
 INST_FILE=install -m 0644
 INST_EXEC=install -m 0755
 
-FLAGS=-Wall -Werror $(shell pkg-config --cflags --libs x11)
+FLAGS=-Wall -Wextra $(shell pkg-config --cflags --libs x11)
 
 .SUFFIXES:
 .SUFFIXES: .in .c
