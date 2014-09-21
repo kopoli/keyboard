@@ -1,0 +1,70 @@
+* Tool for setting up a custom keyboard layout in X
+
+  I use this tool to set my keyboards to the following layout:
+
+  [[./img/keyboard-layout.png]]
+
+  This is a typical QWERTY layout with finnish configuration with the
+  following changes:
+  - Control_L replaces caps-lock.
+  - Hyper_L replaces Control_L.
+  - Tab and Meta_L are swapped.
+
+  A script (xkb-layout) is installed that changes the keyboard layout. Also a binary
+  program (xkb-unlocker) is required to be compiled to disable possible caps
+  lock if it is currently enabled.
+
+* Requirements
+
+  The following programs:
+
+  GNU Make
+  A C-compiler
+  libx11 development packages (for caps-lock unlocking)
+  xkbcomp
+  setxkbmap
+  notify-send (for displaying the changed keymap)
+  xkbprint
+  ps2pdf
+
+* Usage / Installation
+
+  The Makefile will install a wrapper for the script in BINDIR. It will also
+  create *.desktop -files for the keyboard setting and install them into
+  INSTDIR. Look into the Makefile.
+
+  The following command compiles the xkb-unlocker, installs the wrapperscript,
+  xkb-unlocker and and the desktop-files:
+
+  #+begin_src shell
+  make
+  #+end_src
+
+  This git repository needs to exist when running the wrapper script, because
+  the keyboard configurations are kept in the keyboard/ subdirectory.
+
+  You can change the keyboard layout with the following:
+  
+  #+begin_src shell
+  xkb-layout
+  #+end_src
+
+  Give the --help -argument and the script will display an usage.
+
+* Basic operation
+
+  The script works by using xkbcomp to compile a keymap from configurations in
+  the keyboard subdirectory. You can create your own keyboard configurations
+  there.
+
+* Displaying of the current keyboard layout
+
+  You can create a PDF-image of the current keyboard layout with the
+  following:
+
+  #+begin_src shell
+  make image
+  #+end_src
+
+  The first image is with no modifiers pressed, the following is with shift
+  and thereafter is shift+alt-gr.
