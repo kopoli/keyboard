@@ -9,8 +9,10 @@
   - Control_L replaces caps-lock.
   - Hyper_L replaces Control_L.
   - Tab and Meta_L are swapped.
-  - insert and pause-break buttons are swapped. This is for kinesis freestyle2
+  - Insert and pause-break buttons are swapped. This is for kinesis freestyle2
     where the insert button is behind a modal Fn key.
+  - For Kinesis Freestyle2, reorganize the Home-column into the following
+    order: Home, PageUp, PageDown, End
 
   A script (xkb-layout) is installed that changes the keyboard layout. Also a binary
   program (xkb-unlocker) is required to be compiled to disable possible caps
