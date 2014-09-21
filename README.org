@@ -14,20 +14,20 @@
   program (xkb-unlocker) is required to be compiled to disable possible caps
   lock if it is currently enabled.
 
-* Requirements
+** Requirements
 
   The following programs:
 
-  GNU Make
-  A C-compiler
-  libx11 development packages (for caps-lock unlocking)
-  xkbcomp
-  setxkbmap
-  notify-send (for displaying the changed keymap)
-  xkbprint
-  ps2pdf
+  - GNU Make
+  - A C-compiler
+  - libx11 development packages (for caps-lock unlocking)
+  - xkbcomp
+  - setxkbmap
+  - notify-send (for displaying the changed keymap)
+  - xkbprint
+  - ps2pdf
 
-* Usage / Installation
+** Usage / Installation
 
   The Makefile will install a wrapper for the script in BINDIR. It will also
   create *.desktop -files for the keyboard setting and install them into
@@ -51,13 +51,13 @@
 
   Give the --help -argument and the script will display an usage.
 
-* Basic operation
+** Basic operation
 
   The script works by using xkbcomp to compile a keymap from configurations in
   the keyboard subdirectory. You can create your own keyboard configurations
   there.
 
-* Displaying of the current keyboard layout
+** Displaying of the current keyboard layout
 
   You can create a PDF-image of the current keyboard layout with the
   following:
@@ -67,4 +67,5 @@
   #+end_src
 
   The first image is with no modifiers pressed, the following is with shift
-  and thereafter is shift+alt-gr.
+  and thereafter is shift+alt-gr. The image will be similar to the one
+  displayed in this README.
