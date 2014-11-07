@@ -27,6 +27,12 @@ xkb_symbols "alt_swap" {
     modifier_map Mod1   { <TAB>, <MENU> };
 };
 
+partial hidden modifier_keys
+xkb_symbols "hyper_alt_swap" {
+    include "special(hyper_swap)"
+    include "special(alt_swap)"
+};
+
 // Swap insert and pause-break
 // for Kinesis freestyle2
 partial hidden modifier_keys
@@ -51,9 +57,9 @@ xkb_symbols "home_column" {
 };
 
 partial hidden modifier_keys
-xkb_symbols "hyper_alt_swap" {
-    include "menu(hyper_swap)"
-    include "menu(alt_swap)"
-    include "menu(insert_swap)"
-    include "menu(home_column)"
+xkb_symbols "hyper_kinesis_freestyle2" {
+    include "special(hyper_swap)"
+    include "special(alt_swap)"
+    include "special(insert_swap)"
+    include "special(home_column)"
 };
