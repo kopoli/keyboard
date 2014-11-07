@@ -37,16 +37,11 @@ EOF
     exit 1
 }
 
-map="$1"
 
 defmap=fi-hs-qwerty
 
-rotation="$defmap us-hs-dvorak $defmap"
-
 basedir=$(dirname $0)
 KBDIR=$basedir/keyboard
-
-test -z "$map" && map=$defmap
 
 mapconfigs=$(echo $KBDIR/*xkb | sed -e "s,$KBDIR/,,g; s,-layout.xkb,,g; s, ,|,g")
 
@@ -92,6 +87,21 @@ rotate_maps()
     test -z "$next" && next=$defmap
     set_keymap $next
 }
+
+
+# main script
+map="$1"
+if test -z "$map"; then
+
+    # Autodetect the Kinesis freestyle2 keyboard
+    if lsusb | grep -q 'Alcor Micro Corp. Keyboard'; then
+        defmap=fi-hs-qwerty-freestyle2
+    fi
+
+    map=$defmap
+fi
+
+rotation="$defmap us-hs-dvorak $defmap"
 
 case $map in
 
