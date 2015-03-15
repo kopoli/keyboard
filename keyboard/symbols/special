@@ -1,3 +1,4 @@
+// Place Hyper_L to CAPS and Hyper_R to RTSH
 partial hidden modifier_keys
 xkb_symbols "hyper" {
     key <CAPS> {        [       Hyper_L  ]       };
@@ -5,6 +6,7 @@ xkb_symbols "hyper" {
     modifier_map Mod3   { <CAPS>, <RTSH>, <HYPR> };
 };
 
+// Move Control_L to CAPS and place Hyper_L to LCTL
 partial hidden modifier_keys
 xkb_symbols "hyper_swap" {
     key <CAPS> {        [       Control_L  ]     };
@@ -13,24 +15,15 @@ xkb_symbols "hyper_swap" {
     key <LCTL> {        [       Hyper_L  ]       };
 
     modifier_map Mod3   { <LCTL>, <HYPR>  };
-
-    // new alt key next to Ctrl_R
-    key <MENU> {        [       Alt_R, Meta_R  ]       };
 };
 
-// swap TAB and LALT keys
+// Swap TAB and LALT keys
 partial hidden modifier_keys
 xkb_symbols "alt_swap" {
     key  <TAB> {	[ Alt_L, Meta_L	]	};
     key  <LALT> {	[ Tab,	ISO_Left_Tab	]	};
 
     modifier_map Mod1   { <TAB>, <MENU> };
-};
-
-partial hidden modifier_keys
-xkb_symbols "hyper_alt_swap" {
-    include "special(hyper_swap)"
-    include "special(alt_swap)"
 };
 
 // Swap insert and pause-break
@@ -49,11 +42,20 @@ xkb_symbols "insert_swap" {
 // Make it the following:
 // Home, PgUp, PgDown, End
 partial hidden alphanumeric_keys
-xkb_symbols "home_column" {
+xkb_symbols "reorganize_home_column" {
     key  <HOME> {	[ Home ]	};
     key  <END> {	[ Prior ]	};
     key  <PGUP> {	[ Next ]	};
     key  <PGDN> {	[ End ]	};
+};
+
+
+// COLLECTIONS
+
+partial hidden modifier_keys
+xkb_symbols "hyper_alt_swap" {
+    include "special(hyper_swap)"
+    include "special(alt_swap)"
 };
 
 partial hidden modifier_keys
@@ -61,5 +63,5 @@ xkb_symbols "hyper_kinesis_freestyle2" {
     include "special(hyper_swap)"
     include "special(alt_swap)"
     include "special(insert_swap)"
-    include "special(home_column)"
+    include "special(reorganize_home_column)"
 };
