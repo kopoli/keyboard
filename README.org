@@ -16,24 +16,38 @@
       PageDown, End
     - The keyboard is detected automatically.
 
-  A script (xkb-layout) is installed that changes the keyboard layout. Also a binary
-  program (xkb-unlocker) is required to be compiled to disable possible caps
-  lock if it is currently enabled.
+  Contents:
+  - xkb-layout: A script that changes the current keyboard layout.
+  - xkb-unlocker: A C program that disables caps lock if it is currently
+    enabled.
+  - keyboard layout files:
+    - keyboard/*.xkb: Layouts that are selectable using xkb-layout.
+  - keyboard symbols files:
+    - keyboard/symbols/special: The configuration for the above paragraph.
+  - genpkg.sh: A script to generate debian packages of layouts described by
+    the files in directory packages.
 
 ** Requirements
 
-  The following programs:
-
-  - GNU Make
-  - A C-compiler
-  - libx11 development packages (for caps-lock unlocking)
+  For xkb-layout script:
   - xkbcomp
   - setxkbmap
   - notify-send (for displaying the changed keymap)
+
+  For caps-lock unlocking:
+  - A C-compiler
+  - libx11 development packages
+
+  For building and generating the keyboard layout file:
+  - GNU Make
   - xkbprint
   - ps2pdf
 
-** Usage / Installation
+  For generating debian packages:
+  - dpkg-deb
+  - fakeroot
+
+** Installing and using the xkb-layout script
 
   The Makefile will install a wrapper for the script in BINDIR. It will also
   create *.desktop -files for the keyboard setting and install them into
@@ -50,18 +64,25 @@
   the keyboard configurations are kept in the keyboard/ subdirectory.
 
   You can change the keyboard layout with the following:
-  
+
   #+begin_src shell
   xkb-layout
   #+end_src
 
-  Give the --help -argument and the script will display a usage message.
+  Give the --help -argument and the script will display a usage message. You
+  can switch to a specific layout by giving the name of a xkb-file in the
+  keyboard directory.
 
-** Basic operation
+** Modifying and creating layouts
 
-  The script works by using xkbcomp to compile a keymap from configurations in
-  the keyboard subdirectory. You can create your own keyboard configurations
-  there.
+   You can modify whole layouts by modifying the xkb-files in the keyboard
+   directory. You can add or modify partial symbol mappings in the files of
+   the keyboard/symbols directory. 
+
+   Guides on the syntax can be found through google and for example:
+
+   - http://www.charvolant.org/~doug/xkb/html/node5.html
+   - https://wiki.archlinux.org/index.php/X_KeyBoard_extension#xkb_symbols
 
 ** Displaying of the current keyboard layout
 
@@ -75,3 +96,48 @@
   The first image is with no modifiers pressed, the following is with shift
   and thereafter is shift+alt-gr. The image will be similar to the one
   displayed in this README. See manpage of xkbprint(1).
+
+** Creating a debian package of a keyboard layout
+
+   You can now create a proper keyboard layout file that can be loaded with
+   setxkbmap with the genpkg.sh script. The basic usage is the following:
+
+   #+begin_src shell
+   ./genpkg.sh <control-file>
+   #+end_src
+
+   There are example control files in the directory packages. To generate all
+   packages in that directory, run the following command:
+
+   #+begin_src shell
+   make pkg
+   #+end_src
+
+*** The control file for generating the package
+
+    The control file is a debian control file with some special headers:
+
+    XKL-symbols: The partial xkb_symbols -sections that will be included to the
+    default xkb_symbols -section in the generated symbols file.
+
+    XKL-name: The string that will be in the name[Group1] -item in the
+    xkb_symbols section.
+
+    XKL-data: The file that is used as the base of the xkb_symbols -file. The path
+    is relative to the git repository root.
+
+    Some variables are expanded with shell. Notable ones:
+
+    ${PKGNAME} - The filename of the keymap.
+
+*** Example usage
+
+    The following will generate and install keymap package. Finally it will
+    create a keyboard.pdf with the current keyboard layout.
+
+    #+begin_src shell
+    ./genpkg.sh xkl-hyper
+    sudo dpkg -i xkl-hyper_*deb
+    setxkbmap xkl-hyper
+    make image
+    #+end_src
