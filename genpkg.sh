@@ -5,14 +5,11 @@ CTRLFILE=$1
 
 CURDIR=$PWD
 SYMBOLSFILE=$CURDIR/keyboard/symbols/special
-# TMPDIR=$(mktemp -d)
-TMPDIR=testi
-mkdir -p $TMPDIR
+TMPDIR=$(mktemp -d)
 
 trap deinit INT TERM EXIT
 deinit() {
-    # rm -fr $TMPDIR
-    :
+    rm -fr $TMPDIR
 }
 die() { echo "Error: $@"; exit 1; }
 
