@@ -1,10 +1,9 @@
 #!/bin/sh
 
+# Creates a debian package from a specially crafted debian control file
+
 CTRLFILE=$1
-
-
 CURDIR=$PWD
-SYMBOLSFILE=$CURDIR/keyboard/symbols/special
 TMPDIR=$(mktemp -d)
 
 trap deinit INT TERM EXIT
@@ -20,10 +19,15 @@ generate_include() {
     done
 }
 
+# Parse headings of control-formatted file
+parse_heading() {
+    sed -n -e "/^$1:/{s/^[^:]*: //; p}"
+}
+
 # Generate the default layout block of the xkb configuration
 generate_layout_block() {
-    local name="$(sed -n -e '/XKL-name:/{s/^[^:]*: //; p}' $CTRLFILE)"
-    local includes="$(sed -n -e '/XKL-layouts:/{s/^[^:]*: //; p}' $CTRLFILE)"
+    local name="$(parse_heading XKL-name < $CTRLFILE)"
+    local includes="$(parse_heading XKL-layouts < $CTRLFILE)"
 
     cat <<EOF
 default partial alphanumeric_keys
@@ -40,14 +44,17 @@ if ! test -f "$CTRLFILE"; then
     die "The control file is required for generating a package."
 fi
 
-(
-    CTRLFILE=$(readlink -f "$CTRLFILE")
-    PKGNAME=$(basename "$CTRLFILE")
+CTRLFILE=$(readlink -f "$CTRLFILE")
+PKGNAME=$(basename "$CTRLFILE")
+SYMBOLSFILE=$CURDIR/$(parse_heading "XKL-data" < "$CTRLFILE")
 
-    CMDLINE="$0 $@"
-    VERSION=$(git describe --always)
-    OUTFILE=usr/share/X11/xkb/symbols/$(basename "$CTRLFILE")
-    LAYOUT=$(generate_layout_block)
+test -r "$SYMBOLSFILE" || die "Symbols file $SYMBOLSFILE not readable."
+
+CMDLINE="$0 $@"
+VERSION=$(git describe --always)
+OUTFILE=usr/share/X11/xkb/symbols/$(basename "$CTRLFILE")
+LAYOUT=$(generate_layout_block)
+(
     export TMPDIR CTRLFILE PKGNAME CMDLINE SYMBOLSFILE VERSION OUTFILE LAYOUT
 
     fakeroot /bin/sh -c "

@@ -4,6 +4,7 @@ Maintainer: Kalle Kankare <kalle.kankare@iki.fi>
 Architecture: all
 XKL-layouts: fi ${PKGNAME}(hyper_swap) ${PKGNAME}(alt_swap) ${PKGNAME}(insert_swap) ${PKGNAME}(reorganize_home_column)
 XKL-name: Finnish (Hyper and Alt swap for Kinesis Freestyle2)
+XKL-data: keyboard/symbols/special
 Description: ${PKGNAME}
  Hyper and Alt swap with Kinesis Freestyle2 specific changes:
  - Insert and Pause swap.
