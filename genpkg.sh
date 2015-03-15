@@ -61,7 +61,7 @@ LAYOUT=$(generate_layout_block)
 cd $TMPDIR
 mkdir -p DEBIAN
 cat <<EOF > DEBIAN/control
-$(cat $CTRLFILE)
+$(sed -e '/^XKL/d' < $CTRLFILE)
 EOF
 mkdir -p $(dirname "$OUTFILE")
 cat <<EOF > $OUTFILE
