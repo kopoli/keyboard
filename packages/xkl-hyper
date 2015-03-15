@@ -1,0 +1,8 @@
+Package: ${PKGNAME}
+Version: 1.0
+Maintainer: Kalle Kankare <kalle.kankare@iki.fi>
+Architecture: all
+XKL-layouts: fi ${PKGNAME}(hyper_swap) ${PKGNAME}(alt_swap)
+XKL-name: Finnish (Hyper and Alt swap)
+Description: ${PKGNAME}
+ Hyper-swap and alt-swap layout with default finnish symbols.
