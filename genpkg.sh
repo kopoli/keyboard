@@ -21,13 +21,13 @@ generate_include() {
 
 # Parse headings of control-formatted file
 parse_heading() {
-    sed -n -e "/^$1:/{s/^[^:]*: //; p}"
+    sed -n -e "/^$1:/{s/^[^:]*: //; p}" < "$CTRLFILE"
 }
 
 # Generate the default layout block of the xkb configuration
 generate_layout_block() {
-    local name="$(parse_heading XKL-name < $CTRLFILE)"
-    local includes="$(parse_heading XKL-layouts < $CTRLFILE)"
+    local name="$(parse_heading XKL-name)"
+    local includes="$(parse_heading XKL-layouts)"
 
     cat <<EOF
 default partial alphanumeric_keys
