@@ -84,6 +84,14 @@
    - http://www.charvolant.org/~doug/xkb/html/node5.html
    - https://wiki.archlinux.org/index.php/X_KeyBoard_extension#xkb_symbols
 
+   When developing keyboard layouts the X will cache the generated keymap when
+   it is enabled the first time and it will use the cache from then
+   on. Therefore one should remove the cache in the following way:
+
+   #+begin_src shell
+   rm -f /var/lib/xkb/server-*.xkm
+   #+end_src
+
 ** Displaying of the current keyboard layout
 
   You can create a PDF-image of the current keyboard layout with the
