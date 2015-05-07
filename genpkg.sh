@@ -1,6 +1,13 @@
 #!/bin/sh
 
 # Creates a debian package from a specially crafted debian control file
+usage() {
+    cat <<EOF
+Usage: $0 <control-file>
+EOF
+    exit 1
+}
+
 
 CTRLFILE=$1
 CURDIR=$PWD
@@ -24,6 +31,10 @@ parse_heading() {
     sed -n -e "/^$1:/{s/^[^:]*: //; p}" < "$CTRLFILE"
 }
 
+generate_files_block() {
+    local files=$(parse_heading XKL-files)
+}
+
 # Generate the default layout block of the xkb configuration
 generate_layout_block() {
     local name="$(parse_heading XKL-name)"
@@ -39,45 +50,98 @@ EOF
     echo "};"
 }
 
-test -z "$CTRLFILE" && { echo "Usage: $0 <control-file>" && exit 1; }
-if ! test -f "$CTRLFILE"; then
-    die "The control file is required for generating a package."
-fi
-
-CTRLFILE=$(readlink -f "$CTRLFILE")
-PKGNAME=$(basename "$CTRLFILE")
-SYMBOLSFILE=$CURDIR/$(parse_heading "XKL-data" < "$CTRLFILE")
-
-test -r "$SYMBOLSFILE" || die "Symbols file $SYMBOLSFILE not readable."
-
-CMDLINE="$0 $@"
-VERSION=$(git describe --always)
-OUTFILE=usr/share/X11/xkb/symbols/$(basename "$CTRLFILE")
-LAYOUT=$(generate_layout_block)
-(
-    export TMPDIR CTRLFILE PKGNAME CMDLINE SYMBOLSFILE VERSION OUTFILE LAYOUT
-
-    fakeroot /bin/sh -c "
-cd $TMPDIR
-mkdir -p DEBIAN
-cat <<EOF > DEBIAN/control
-$(sed -e '/^XKL/d' < $CTRLFILE)
-EOF
-mkdir -p $(dirname "$OUTFILE")
-cat <<EOF > $OUTFILE
+install_layout() {
+    BASECTRLFILE=$(basename "$CTRLFILE")
+    OUTSYMBOLSFILE=usr/share/X11/xkb/symbols/$BASECTRLFILE
+    OUTRULESFILE=usr/share/X11/xkb/rules/evdev.xml.d/$BASECTRLFILE.xml
+    LAYOUT=$(generate_layout_block)
+    (
+        # export TMPDIR CTRLFILE PKGNAME CMDLINE SYMBOLSFILE VERSION OUTSYMBOLSFILE OUTRULESFILE LAYOUT
+        set -e
+        cd $TMPDIR
+        mkdir -p $(dirname "$OUTSYMBOLSFILE") $(dirname "$OUTRULESFILE")
+        cat <<EOF > $OUTSYMBOLSFILE
 // Generated with $CMDLINE
 // URL: https://github.com/kopoli/keyboard
 // Version: $VERSION
 
 EOF
-cat <<EOF >> $OUTFILE
+        cat <<EOF >> $OUTSYMBOLSFILE
 // The main layout
 $LAYOUT
 
 EOF
 
-sed -n '/COLLECTIONS/q; p;' $SYMBOLSFILE >> $OUTFILE
+        cat <<EOF > $OUTRULESFILE
+     <!-- Generator: $CMDLINE
+          Version:   $VERSION
+          Package:   $PKGNAME
+       -->
+     <layout>
+       <configItem>
+         <name>$BASECTRLFILE</name>
+         <shortDescription>$(parse_heading XKL-shortDescription)</shortDescription>
+         <description>$(parse_heading XKL-name)</description>
+         <languageList>
+           <iso639Id>$(parse_heading XKL-langiso639Id)</iso639Id>
+         </languageList>
+       </configItem>
+       <variantList/>
+     </layout>
+     <!--  End package $PKGNAME -->
+EOF
+cat $OUTRULESFILE
+
+    )
+    PACKAGE_HAS_CONTENTS=t
+}
+
+install_files() {
+    :
+    # TODO installing packages of the XKL-files heading
+    PACKAGE_HAS_CONTENTS=t
+}
+
+create_package() {
+    (
+        set -e
+        cd $TMPDIR
+        mkdir -p DEBIAN
+
+        export CURDIR TMPDIR PKGNAME CMDLINE VERSION
+        fakeroot  /bin/sh -ec "
+cat <<EOF > DEBIAN/control
+$(sed -e '/^XKL/d' < $CTRLFILE)
+EOF
+
+cd $TMPDIR
+chown -R root.root *
 cd $CURDIR
 dpkg-deb -b $TMPDIR .
 "
-) || die "Building failed"
+    ) || die "Creating the package failed."
+}
+
+
+test -z "$CTRLFILE" && usage
+if ! test -f "$CTRLFILE"; then
+    die "The control file is required for generating a package."
+fi
+
+set -x
+
+CTRLFILE=$(readlink -f "$CTRLFILE")
+PKGNAME=$(basename "$CTRLFILE")
+
+SYMBOLSFILE=$CURDIR/$(parse_heading "XKL-data")
+INSTALLFILES=$(parse_heading "XKL-files")
+CMDLINE="$0 $@"
+VERSION=$(git describe --always)
+PACKAGE_HAS_CONTENTS=
+
+test -r "$SYMBOLSFILE" || die "Symbols file $SYMBOLSFILE not readable."
+
+test -r "$SYMBOLSFILE" && install_layout
+test -n "$INSTALLFILES" && install_files
+test -n "$PACKAGE_HAS_CONTENTS" && create_package
+
