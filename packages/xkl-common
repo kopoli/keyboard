@@ -1,0 +1,8 @@
+Package: ${PKGNAME}
+Version: 1.0
+Maintainer: Kalle Kankare <kalle.kankare@iki.fi>
+Architecture: all
+XKL-files: xkl-regen-evdev|usr/bin
+Description: ${PKGNAME}
+ Common scripts for XKL. The xkl-regen-evdev regenerates the evdev.xml in
+ /usr/share/X11/xkb/rules directory. 
