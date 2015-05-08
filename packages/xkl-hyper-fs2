@@ -2,6 +2,7 @@ Package: ${PKGNAME}
 Version: 1.0
 Maintainer: Kalle Kankare <kalle.kankare@iki.fi>
 Architecture: all
+Depends: xkl-common
 XKL-layouts: fi ${PKGNAME}(hyper_swap) ${PKGNAME}(alt_swap) ${PKGNAME}(insert_swap) ${PKGNAME}(reorganize_home_column)
 XKL-name: Finnish (Hyper and Alt swap for Kinesis Freestyle2)
 XKL-data: keyboard/symbols/special

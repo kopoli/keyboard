@@ -2,6 +2,7 @@ Package: ${PKGNAME}
 Version: 1.0
 Maintainer: Kalle Kankare <kalle.kankare@iki.fi>
 Architecture: all
+Depends: xkl-common
 XKL-name: Finnish (Hyper and Alt swap)
 XKL-shortDescription: hy
 XKL-langiso639Id: fin
