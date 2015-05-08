@@ -96,9 +96,17 @@ cat $OUTRULESFILE
     PACKAGE_HAS_CONTENTS=t
 }
 
+
 install_files() {
-    :
-    # TODO installing packages of the XKL-files heading
+    FILEDIR=${CTRLFILE}-files
+    for file in $INSTALLFILES; do
+        echo $file
+        fname=${file%%|*}
+        dname=${file##*|}
+        install -D ${FILEDIR}/$fname $TMPDIR/$dname/$fname || \
+            die "Copying file $fname to package failed."
+    done
+
     PACKAGE_HAS_CONTENTS=t
 }
 
