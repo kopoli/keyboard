@@ -3,7 +3,7 @@ Version: 1.0
 Maintainer: Kalle Kankare <kalle.kankare@iki.fi>
 Architecture: all
 Depends: xkl-common
-XKL-name: Finnish (Hyper and Alt swap)
+XKL-name: Hyper and Alt-swap for Finnish
 XKL-shortDescription: hy
 XKL-langiso639Id: fin
 XKL-layouts: fi ${PKGNAME}(hyper_swap) ${PKGNAME}(alt_swap)
