@@ -87,7 +87,6 @@ EOF
      </layout>
      <!--  End package $PKGNAME -->
 EOF
-cat $OUTRULESFILE
 
     )
     PACKAGE_HAS_CONTENTS=t
@@ -97,7 +96,6 @@ cat $OUTRULESFILE
 install_files() {
     FILEDIR=${CTRLFILE}-files
     for file in $INSTALLFILES; do
-        echo $file
         fname=${file%%|*}
         dname=${file##*|}
         install -D ${FILEDIR}/$fname $TMPDIR/$dname/$fname || \
@@ -115,11 +113,11 @@ create_package() {
 
         export CURDIR TMPDIR PKGNAME CMDLINE VERSION
         fakeroot  /bin/sh -ec "
+cd $TMPDIR
 cat <<EOF > DEBIAN/control
 $(sed -e '/^XKL/d' < $CTRLFILE)
 EOF
 
-cd $TMPDIR
 chown -R root.root *
 cd $CURDIR
 dpkg-deb -b $TMPDIR .
@@ -142,6 +140,9 @@ fi
 
 CTRLFILE=$(readlink -f "$CTRLFILE")
 PKGNAME=$(basename "$CTRLFILE")
+
+
+test -f "$CTRLFILE" || die "$CTRLFILE must be a file."
 
 SYMBOLSFILE=$CURDIR/$(parse_heading "XKL-data")
 INSTALLFILES=$(parse_heading "XKL-files")
