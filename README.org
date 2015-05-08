@@ -134,9 +134,41 @@
     XKL-data: The file that is used as the base of the xkb_symbols -file. The path
     is relative to the git repository root.
 
+    XKL-shortDescription: The contents of the shortDescription tag in the
+    evdev.xml file.
+
+    XKL-langiso639Id: The contents of langiso639Id tag in the evdev.xml file.
+
+    XKL-files: Files that are searched from directory ${PKGNAME}-files and
+    installed to given directory. The arguments are a space separated list of
+    the following format "filename|directory" See an example in the file
+    packages/xkl-common.
+
     Some variables are expanded with shell. Notable ones:
 
     ${PKGNAME} - The filename of the keymap.
+
+*** Making it available for the system's keyboard layout utility
+
+    To add a layout to a system's own utility, usually the
+    /usr/share/X11/xkb/rules/evdev.xml file needs to be modified. The package
+    xkl-common contains a script called xkl-regen-evdev which will modify that
+    file in accordance to xml fragments found in directory
+    /usr/share/X11/xkb/rules/evdev.xml.d. All control files containing the
+    XKL-name (etc.) will generate an xml-fragment in addition to the actual
+    keyboard layout files. Run the following command after installing the
+    xkb-* packages to regenerate the evdev.xml file:
+
+    #+begin_src shell
+    sudo xkl-regen-evdev update
+    #+end_src
+
+    When your system recognizes the keyboard layout you don't need to run any
+    scripts to enable it.
+
+    *Note:* If the evdev.xml file gets corrupted, you should just install it
+    back from the 'xkb-data' debian package. (This is just for being prepared,
+    because the script might contain bugs.)
 
 *** Example usage
 
@@ -144,7 +176,9 @@
     create a keyboard.pdf with the current keyboard layout.
 
     #+begin_src shell
+    ./genpkg.sh xkl-common
     ./genpkg.sh xkl-hyper
+    sudo dpkg -i xkl-common*deb
     sudo dpkg -i xkl-hyper_*deb
     setxkbmap xkl-hyper
     make image
