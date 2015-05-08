@@ -8,12 +8,6 @@ EOF
     exit 1
 }
 
-
-CTRLFILE=$1
-CURDIR=$PWD
-TMPDIR=$(mktemp -d)
-
-trap deinit INT TERM EXIT
 deinit() {
     rm -fr $TMPDIR
 }
@@ -51,6 +45,9 @@ EOF
 }
 
 install_layout() {
+    test -f "$SYMBOLSFILE" -a -r "$SYMBOLSFILE" || \
+        die "Symbols file $SYMBOLSFILE not readable."
+
     BASECTRLFILE=$(basename "$CTRLFILE")
     OUTSYMBOLSFILE=usr/share/X11/xkb/symbols/$BASECTRLFILE
     OUTRULESFILE=usr/share/X11/xkb/rules/evdev.xml.d/$BASECTRLFILE.xml
@@ -130,13 +127,18 @@ dpkg-deb -b $TMPDIR .
     ) || die "Creating the package failed."
 }
 
+# main script
+
+CTRLFILE=$1
+CURDIR=$PWD
+TMPDIR=$(mktemp -d)
+
+trap deinit INT TERM EXIT
 
 test -z "$CTRLFILE" && usage
 if ! test -f "$CTRLFILE"; then
     die "The control file is required for generating a package."
 fi
-
-set -x
 
 CTRLFILE=$(readlink -f "$CTRLFILE")
 PKGNAME=$(basename "$CTRLFILE")
@@ -147,9 +149,8 @@ CMDLINE="$0 $@"
 VERSION=$(git describe --always)
 PACKAGE_HAS_CONTENTS=
 
-test -r "$SYMBOLSFILE" || die "Symbols file $SYMBOLSFILE not readable."
 
-test -r "$SYMBOLSFILE" && install_layout
+test -f "$SYMBOLSFILE" && install_layout
 test -n "$INSTALLFILES" && install_files
 test -n "$PACKAGE_HAS_CONTENTS" && create_package
 
