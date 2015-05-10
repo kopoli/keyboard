@@ -18,110 +18,59 @@ usage()
     test -n "$1" && echo "Error: $@"
 
     cat <<EOF
-usage: $0 [-rotate | keymap-name]
+usage: $0 <keymap-name>
 
 Changes the keyboard layout.
 
 Arguments:
-
-  -rotate        - This will rotate the keymaps in the following order:kl
-                   $rotation
   <keymap-name>  - This will set to given keymap.
 
-Without arguments it will set the keymap: $defmap
+The following are possible keymaps:
+  $(echo $KBDIR/*xkb | sed -e "s,$KBDIR/,,g; s,-layout.xkb,,g; s, ,\n  ,g")
 
-The following are possible keymaps: $mapconfigs
-Current keymap: $(current_keymap)
+The keymap and related files should be in directory: $KBDIR
+
+Current keyboard layout (from X11): $(current_keymap)
 
 EOF
     exit 1
 }
 
+def() { eval "$1=\${$1-\"$2\"}"; }
 
-defmap=fi-hs-qwerty
-
-basedir=$(dirname $0)
-KBDIR=$basedir/keyboard
-
-mapconfigs=$(echo $KBDIR/*xkb | sed -e "s,$KBDIR/,,g; s,-layout.xkb,,g; s, ,|,g")
+def KBDIR $PWD/keyboard
+def XKB_RATE "300 20"
 
 # display keymap in a layout file
-layout_keymap()
-{
+layout_keymap() {
     sed -ne '/xkb_symbols/{s,.*"\([^"]*\)".*,\1,; p; q;}' $1
 }
 
 # display currently used keymap
-current_keymap()
-{
+current_keymap() {
     xkbprint $DISPLAY -o - | sed -ne '/Layout/{s,.*out: ,,; s,) cent.*,,; p;q}'
 }
 
 # display layout file
-layout_file()
-{
+layout_file() {
     echo $KBDIR/$1-layout.xkb
 }
 
 # set keyboard map from a layout file
-set_keymap()
-{
+set_keymap() {
     xkbcomp -I$KBDIR $(layout_file $1) $DISPLAY -w0
-    xset r rate 300 20
+    xset r rate $XKB_RATE
     xkb-unlocker
 
     notify-send -i info "Keymap set: $1"
 }
 
-# rotate keyboard maps
-rotate_maps()
-{
-    kmap=$(current_keymap)
-
-    next=
-    for name in $rotation; do
-	test -n "$next" && { next=$name; break; }
-	test "$(layout_keymap $(layout_file $name))" = "$kmap" && next=1
-    done
-
-    test -z "$next" && next=$defmap
-    set_keymap $next
-}
-
-
 # main script
 map="$1"
-if test -z "$map"; then
-
-    # Autodetect the Kinesis freestyle2 keyboard
-    if lsusb | grep -q 'Alcor Micro Corp. Keyboard'; then
-        defmap=fi-hs-qwerty-freestyle2
-    fi
-
-    map=$defmap
-fi
-
-rotation="$defmap us-hs-dvorak $defmap"
-
-case $map in
-
-    dvorak)
-	# This has the level3 enabled with alt gr
-	setxkbmap "us(dvorak-alt-intl)"
-
-	cat <<EOF | xmodmap -
-
-keycode  38 = a A a A adiaeresis Adiaeresis
-keycode  39 = o O o O odiaeresis Odiaeresis
-
-EOF
-
-	;;
-
-    -rotate)
-	rotate_maps
-	;;
-
+case "$map" in
+    '')
+        usage
+        ;;
     *)
 	mapfile=$KBDIR/${map}-layout.xkb
 	if test -f $mapfile; then
