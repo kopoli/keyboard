@@ -4,28 +4,32 @@
 
   [[./img/keyboard-layout.png]]
 
-  This is a typical QWERTY layout with finnish configuration with the
+  This is a typical QWERTY layout with Finnish configuration with the
   following changes:
   - Control_L replaces caps-lock.
   - Hyper_L replaces Control_L.
   - Tab and Meta_L are swapped.
-  - The following changes are applied only for Kinesis Freestyle2 keyboard:
+
+  - There is a layout for Kinesis Freestyle2 keyboard with the
+    following additional changes:
     - Insert and pause-break buttons are swapped. In Freestyle2 the insert
       button is behind a modal Fn key.
     - Reorganize the Home-column into the following order: Home, PageUp,
       PageDown, End
-    - The keyboard is detected automatically.
 
   Contents:
-  - xkb-layout: A script that changes the current keyboard layout.
+  - xkb-layout.sh: A script that sets the current keyboard layout.
   - xkb-unlocker: A C program that disables caps lock if it is currently
     enabled.
   - keyboard layout files:
     - keyboard/*.xkb: Layouts that are selectable using xkb-layout.
   - keyboard symbols files:
     - keyboard/symbols/special: The configuration for the above paragraph.
-  - genpkg.sh: A script to generate debian packages of layouts described by
+  - generate-deb-pkg.sh: A script to generate debian packages of layouts described by
     the files in directory packages.
+  - generate-xkl.sh: generates a script that runs the xkb-layout.sh with the
+    wanted keyboard layout. The generated script is called 'xkl' and should be
+    copied somewhere in $PATH.
 
 ** Requirements
 
@@ -47,37 +51,58 @@
   - dpkg-deb
   - fakeroot
 
-** Installing and using the xkb-layout script
+** Basic usage of xkb-layout script
 
-  The Makefile will install a wrapper for the script in BINDIR. It will also
-  create *.desktop -files for the keyboard setting and install them into
-  INSTDIR. Look into the Makefile.
+   Running the ./xkb-layout.sh without arguments gives the basic
+   usage. Example:
 
-  The following command compiles the xkb-unlocker, installs the wrapperscript,
-  xkb-unlocker and and the desktop-files:
+   #+begin_src shell
+   ./xkb-layout.sh fi-hs-qwerty
+   #+end_src
 
-  #+begin_src shell
-  make
-  #+end_src
+   This will enable the keyboard layout described in the introduction of this
+   file.
 
-  This git repository needs to exist when running the wrapper script, because
-  the keyboard configurations are kept in the keyboard/ subdirectory.
+** Displaying of the current keyboard layout
 
-  You can change the keyboard layout with the following:
+   You can create a PDF-image of the current keyboard layout with the
+   following:
 
-  #+begin_src shell
-  xkb-layout
-  #+end_src
+   #+begin_src shell
+   make image
+   #+end_src
 
-  Give the --help -argument and the script will display a usage message. You
-  can switch to a specific layout by giving the name of a xkb-file in the
-  keyboard directory.
+   The first image is with no modifiers pressed, the following is with shift
+   and thereafter is shift+alt-gr. The image will be similar to the one
+   displayed in this README. See manpage of xkbprint(1).
+
+** Installing the layout setting script $PATH
+
+   You should run the './generate-xkl.sh' script and select your wanted
+   keyboard layout. This will create the 'xkl' script. Afterwards the Makefile
+   can install that wrapper to BINDIR. It will also create *.desktop -files
+   for the keyboard setting and install them into INSTDIR. Look into the
+   Makefile for details.
+
+   The following command compiles the xkb-unlocker, installs the wrapperscript,
+   xkb-unlocker to ~/bin and the desktop-files to ~/.local/share/applications:
+
+   #+begin_src shell
+   ./generate-xkl.sh fi-hs-qwerty
+   make BINDIR=~/bin
+   #+end_src
+
+   This git repository needs to exist when running the wrapper script, because
+   the keyboard configurations are kept in the keyboard/ subdirectory.
+
+   There is also a make uninstall command to remove the installed files from
+   the aforementioned directories.
 
 ** Modifying and creating layouts
 
    You can modify whole layouts by modifying the xkb-files in the keyboard
    directory. You can add or modify partial symbol mappings in the files of
-   the keyboard/symbols directory. 
+   the keyboard/symbols directory.
 
    Guides on the syntax can be found through google and for example:
 
@@ -92,26 +117,14 @@
    rm -f /var/lib/xkb/server-*.xkm
    #+end_src
 
-** Displaying of the current keyboard layout
-
-  You can create a PDF-image of the current keyboard layout with the
-  following:
-
-  #+begin_src shell
-  make image
-  #+end_src
-
-  The first image is with no modifiers pressed, the following is with shift
-  and thereafter is shift+alt-gr. The image will be similar to the one
-  displayed in this README. See manpage of xkbprint(1).
-
 ** Creating a debian package of a keyboard layout
 
-   You can now create a proper keyboard layout file that can be loaded with
-   setxkbmap with the genpkg.sh script. The basic usage is the following:
+   You can create a proper keyboard layout file that can be loaded with
+   setxkbmap with the generate-deb-pkg.sh script. The basic usage is the
+   following:
 
    #+begin_src shell
-   ./genpkg.sh <control-file>
+   ./generate-deb-pkg.sh <control-file>
    #+end_src
 
    There are example control files in the directory packages. To generate all
@@ -132,7 +145,7 @@
     xkb_symbols section.
 
     XKL-data: The file that is used as the base of the xkb_symbols -file. The path
-    is relative to the git repository root.
+    is relative to the directory the command is run from.
 
     XKL-shortDescription: The contents of the shortDescription tag in the
     evdev.xml file.
@@ -147,6 +160,20 @@
     Some variables are expanded with shell. Notable ones:
 
     ${PKGNAME} - The filename of the keymap.
+
+*** Example usage
+
+    The following will generate and install keymap package. Finally it will
+    create a keyboard.pdf with the current keyboard layout.
+
+    #+begin_src shell
+    ./generate-deb-pkg.sh xkl-common
+    ./generate-deb-pkg.sh xkl-hyper
+    sudo dpkg -i xkl-common*deb
+    sudo dpkg -i xkl-hyper_*deb
+    setxkbmap xkl-hyper
+    make image
+    #+end_src
 
 *** Making it available for the system's keyboard layout utility
 
@@ -164,22 +191,8 @@
     #+end_src
 
     When your system recognizes the keyboard layout you don't need to run any
-    scripts to enable it.
+    scripts to enable it. Which makes the 'xkl' trickery unnecessary.
 
     *Note:* If the evdev.xml file gets corrupted, you should just install it
     back from the 'xkb-data' debian package. (This is just for being prepared,
     because the script might contain bugs.)
-
-*** Example usage
-
-    The following will generate and install keymap package. Finally it will
-    create a keyboard.pdf with the current keyboard layout.
-
-    #+begin_src shell
-    ./genpkg.sh xkl-common
-    ./genpkg.sh xkl-hyper
-    sudo dpkg -i xkl-common*deb
-    sudo dpkg -i xkl-hyper_*deb
-    setxkbmap xkl-hyper
-    make image
-    #+end_src
