@@ -1,9 +1,12 @@
 #!/bin/sh
 
-# Creates a debian package from a specially crafted debian control file
 usage() {
     cat <<EOF
 Usage: $0 <control-file>
+
+Creates a debian package from a specially crafted debian control file. See
+README.org for details.
+
 EOF
     exit 1
 }
@@ -11,6 +14,7 @@ EOF
 deinit() {
     rm -fr $TMPDIR
 }
+
 die() { echo "Error: $@"; exit 1; }
 
 # Generate include clauses inside the xkb configuration
