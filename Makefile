@@ -3,11 +3,11 @@ INSTDIR = $(HOME)/.local/share/applications
 BINDIR ?= $(HOME)/softa/bin
 RUNDIR  = $(PWD)
 
-BIN_FILES=xkb-layout xkb-unlocker
+BIN_FILES=xkl xkb-unlocker
 DESKTOP_FILES=keylayout.desktop
 
-INST_FILE=install -m 0644
-INST_EXEC=install -m 0755
+INST_FILE=install -D -m 0644
+INST_EXEC=install -D -m 0755
 
 FLAGS=-Wall -Wextra $(shell pkg-config --cflags --libs x11)
 
@@ -40,3 +40,7 @@ image:
 
 pkg:
 	for control in packages/*; do test -f $$control && { ./genpkg.sh $$control || exit 1; }; done
+
+xkl:
+	echo "Generate the xkl script with generate-xkl.sh"
+	false

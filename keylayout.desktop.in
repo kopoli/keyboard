@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Application
-Name=XKB Layout
+Name=XKB Layout (xkl)
 Comment=Set the keyboard layout
-Exec=@RUNDIR@/xkb-layout.sh
+Exec=xkl
 Icon=keyboard
 Categories=Settings;
