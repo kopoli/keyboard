@@ -39,7 +39,7 @@ image:
 	for s in $$(seq 1 3); do xkbprint -color -ll $$s  -fit :0 -lc en_US.ISO8859-15  -o -; done | ps2pdf - - > keyboard.pdf
 
 pkg:
-	for control in packages/*; do test -f $$control && { ./genpkg.sh $$control || exit 1; }; done
+	for control in packages/*; do test -f $$control && { ./generate-deb-pkg.sh $$control || exit 1; }; done
 
 xkl:
 	echo "Generate the xkl script with generate-xkl.sh"
