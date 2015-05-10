@@ -1,8 +1,0 @@
-[Desktop Entry]
-Encoding=UTF-8
-Type=Application
-Name=XKB Rotate
-Comment=Rotate the keyboard layout
-Exec=@RUNDIR@/xkb-layout.sh -rotate
-Icon=keyboard
-Categories=Settings;

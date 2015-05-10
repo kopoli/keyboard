@@ -4,7 +4,7 @@ BINDIR ?= $(HOME)/softa/bin
 RUNDIR  = $(PWD)
 
 BIN_FILES=xkb-layout xkb-unlocker
-DESKTOP_FILES=keylayout.desktop keyrotate.desktop
+DESKTOP_FILES=keylayout.desktop
 
 INST_FILE=install -m 0644
 INST_EXEC=install -m 0755
