@@ -57,7 +57,6 @@ install_layout() {
     OUTRULESFILE=usr/share/X11/xkb/rules/evdev.xml.d/$BASECTRLFILE.xml
     LAYOUT=$(generate_layout_block)
     (
-        # export TMPDIR CTRLFILE PKGNAME CMDLINE SYMBOLSFILE VERSION OUTSYMBOLSFILE OUTRULESFILE LAYOUT
         set -e
         cd $TMPDIR
         mkdir -p $(dirname "$OUTSYMBOLSFILE") $(dirname "$OUTRULESFILE")
@@ -67,31 +66,45 @@ install_layout() {
 // Version: $VERSION
 
 EOF
-        cat <<EOF >> $OUTSYMBOLSFILE
-// The main layout
-$LAYOUT
-
-EOF
 
         cat <<EOF > $OUTRULESFILE
      <!-- Generator: $CMDLINE
           Version:   $VERSION
           Package:   $PKGNAME
        -->
+EOF
+
+        # The following might need a second expansion
+        SHORTDESC=$(parse_heading XKL-shortDescription)
+        DESC=$(parse_heading XKL-name)
+        LANGID=$(parse_heading XKL-langiso639Id)
+
+        export OUTSYMBOLSFILE PKGNAME OUTRULESFILE SHORTDESC DESC LANGID
+        /bin/sh -c "
+cat <<EOF >> $OUTSYMBOLSFILE
+// The main layout
+$LAYOUT
+
+// Layout data:
+EOF
+
+cat <<EOF >> $OUTRULESFILE
      <layout>
        <configItem>
          <name>$BASECTRLFILE</name>
-         <shortDescription>$(parse_heading XKL-shortDescription)</shortDescription>
-         <description>$(parse_heading XKL-name)</description>
+         <shortDescription>$SHORTDESC</shortDescription>
+         <description>$DESC</description>
          <languageList>
-           <iso639Id>$(parse_heading XKL-langiso639Id)</iso639Id>
+           <iso639Id>$LANGID</iso639Id>
          </languageList>
        </configItem>
        <variantList/>
      </layout>
      <!--  End package $PKGNAME -->
 EOF
-
+"
+        # Copy the XKL-data to the end of the layout file (Without the COLLECTIONS)
+        sed -n -e '/COLLECTIONS/q; p' < $SYMBOLSFILE >> $OUTSYMBOLSFILE
     )
     PACKAGE_HAS_CONTENTS=t
 }
