@@ -50,7 +50,7 @@ xkb_symbols "reorganize_home_column" {
 };
 
 
-// COLLECTIONS
+// IGNORE-FOLLOWING-XKL-DATA
 
 partial hidden modifier_keys
 xkb_symbols "hyper_alt_swap" {

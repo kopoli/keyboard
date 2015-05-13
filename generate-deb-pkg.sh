@@ -103,8 +103,8 @@ cat <<EOF >> $OUTRULESFILE
      <!--  End package $PKGNAME -->
 EOF
 "
-        # Copy the XKL-data to the end of the layout file (Without the COLLECTIONS)
-        sed -n -e '/COLLECTIONS/q; p' < $SYMBOLSFILE >> $OUTSYMBOLSFILE
+        # Copy the XKL-data to the end of the layout file
+        sed -n -e '/IGNORE-FOLLOWING-XKL-DATA/q; p' < $SYMBOLSFILE >> $OUTSYMBOLSFILE
     )
     PACKAGE_HAS_CONTENTS=t
 }

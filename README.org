@@ -144,8 +144,11 @@
     XKL-name: The string that will be in the name[Group1] -item in the
     xkb_symbols section.
 
-    XKL-data: The file that is used as the base of the xkb_symbols -file. The path
-    is relative to the directory the command is run from.
+    XKL-data: The file that is used as the base of the xkb_symbols -file. The
+    path is relative to the directory the command is run from. The file is
+    parsed until a row with string "IGNORE-FOLLOWING-XKL-DATA" is found. This
+    is to make possible to have keymaps that collect the different
+    sub-keymaps, but not have them in the installed keymap file
 
     XKL-shortDescription: The contents of the shortDescription tag in the
     evdev.xml file.
