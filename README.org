@@ -199,3 +199,6 @@
     *Note:* If the evdev.xml file gets corrupted, you should just install it
     back from the 'xkb-data' debian package. (This is just for being prepared,
     because the script might contain bugs.)
+** License
+
+   MIT
